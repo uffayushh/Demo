@@ -1,0 +1,205 @@
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import accuracy_score
+
+spam_emails = [
+    "win iphone now!!! click fast",
+    "congrats u won 1 lakh rupees claim now",
+    "lottery laga hai bhai call now urgent",
+    "FREE gift card waiting just click link",
+    "you selected for prize money hurry up",
+    "earn 5000 daily from home no work lol",
+    "double paisa scheme 100% real join fast",
+    "click here for free recharge 299 today only",
+    "urgent!!! ur account will be blocked verify now",
+    "bank alert update details warna account band",
+    "get rich quick no investment needed start today",
+    "send bank details to receive reward asap",
+    "work from home earn 50k per week easy job",
+    "cheap loan available no document needed call",
+    "you are lucky winner claim gift before midnight",
+    "free data 10GB grab now limited offer",
+    "buy 1 get 1 free sale ending today hurry",
+    "your atm card blocked click to activate",
+    "verify kyc now or sim will be deactivated",
+    "special offer sir only for you 90% off",
+    "earn money by watching ads signup fast",
+    "congratulations you got selected for job apply now",
+    "income tax refund pending click here fast",
+    "whatsapp shutting down forward this to stay active",
+    "your phone has virus install this app now",
+    "get followers 10k instantly click here",
+    "loan approved instantly 50k no cibil check",
+    "free netflix subscription click and enjoy",
+    "flash sale 95% off only 5 mins left",
+    "send 100 get 1000 back guaranteed trust me",
+    "your aadhaar blocked update now urgent",
+    "claim reward 50000 today last chance",
+    "hack wifi password app download free",
+    "earn 1000 per hour from mobile easy work",
+    "jackpot winner call now dont miss chance",
+    "free gold coin offer click now fast fast",
+    "your number won lucky draw claim today",
+    "register now get cashback instantly 500rs",
+    "electricity bill failed pay now or cut",
+    "kyc incomplete update now avoid block",
+    "government subsidy apply now limited seats",
+    "order now free shipping + surprise gift",
+    "share this msg with 10 ppl win prize",
+    "get free instagram blue tick apply here",
+    "investment plan double money in 10 days",
+    "earn passive income daily no skills needed",
+    "click link to double your paytm balance",
+    "urgent msg from bank verify immediately",
+    "discount coupon waiting claim before expire",
+    "exclusive deal only today dont miss",
+]
+
+non_spam_emails = [
+    "hey are we meeting tomorrow for project?",
+    "pls send me the notes yaar missed class",
+    "class postponed to monday i think",
+    "did u complete assignment?",
+    "exam result coming friday nervous lol",
+    "submit report before sunday dont forget",
+    "lets study together this weekend bro",
+    "sir cancelled class today chill",
+    "bring id card tomorrow for exam",
+    "can u explain that topic once",
+    "happy birthday bro enjoy your day",
+    "mom calling come home fast dinner ready",
+    "coming for match on sunday?",
+    "long time no see lets catch up",
+    "movie last night was really good",
+    "bring snacks when u come pls",
+    "i will be late traffic is too much",
+    "where r u we at canteen",
+    "happy new year bhai",
+    "thanks for yesterday party was fun",
+    "meeting shifted to 3pm confirm pls",
+    "thanks for helping me yesterday",
+    "check document and give feedback",
+    "deadline extended good news",
+    "send ppt before meeting pls",
+    "client meeting tomorrow 11am",
+    "send invoice by today pls",
+    "lunch friday 1pm join us",
+    "report submitted finally",
+    "welcome to team bro",
+    "your order shipped will arrive soon",
+    "package delivered check once",
+    "refund initiated will take 2-3 days",
+    "bill attached check pls",
+    "item back in stock now",
+    "subscription renewing this month",
+    "salary credited check account",
+    "upi payment done to rahul",
+    "bank statement available now",
+    "fd maturity next month",
+    "emi deducted today",
+    "cheque cleared amount credited",
+    "password expiring soon update it",
+    "low balance warning add funds",
+    "1200 debited from account",
+    "credit card bill due soon",
+    "dad called call him back",
+    "dinner at 8 dont be late",
+    "wedding on 15 dec remember",
+    "coming home this weekend?",
+    "pick sister from school pls",
+    "grandma not well visit sunday",
+    "trip to shimla next month yay",
+    "uncle reminded about meeting",
+    "bro reached home safe",
+    "buy milk bread while coming",
+    "doctor appointment friday 10am",
+    "report ready collect from lab",
+    "take medicine at 9pm",
+    "appointment shifted to monday",
+    "insurance premium due next week",
+    "drink water its too hot today",
+    "dental checkup due book it",
+    "prescription ready pickup",
+    "you looked tired take rest",
+    "health checkup reminder",
+    "wifi password changed check group",
+    "meeting 5pm library",
+    "internship application submitted",
+    "library book due next week",
+    "bus timings changed check notice",
+    "parcel at post office collect",
+    "canteen menu updated",
+    "fill feedback form pls",
+    "power cut tomorrow 10-1",
+    "id card ready collect it",
+    "ai seminar thursday 3pm",
+    "register for fest before friday",
+    "scholarship form submitted",
+    "sports day next saturday",
+    "new books in library",
+    "holiday monday enjoy",
+    "gate closes at 6pm now",
+    "hostel room allocated check",
+    "holiday announced tomorrow yay",
+    "resume workshop friday",
+    "group call tonight?",
+    "assignment submitted check pls",
+    "can i borrow textbook",
+    "notes were helpful thanks",
+    "fees last date friday",
+    "project group updated",
+    "coding results out today",
+    "share location im near gate",
+    "going lunch join?",
+    "practical schedule uploaded",
+]
+
+emails = spam_emails + non_spam_emails
+labels = ["spam"] * len(spam_emails) + ["non-spam"] * len(non_spam_emails)
+
+def train_model():
+    print("Training model...")
+    vectorizer = CountVectorizer()
+    X = vectorizer.fit_transform(emails)
+
+    model = MultinomialNB()
+    model.fit(X, labels)
+
+    print("Model trained!")
+    return model, vectorizer
+
+
+def predict_email(email, model, vectorizer):
+    X = vectorizer.transform([email])
+    result = model.predict(X)[0]
+    probs = model.predict_proba(X)[0]
+
+    spam_prob = probs[list(model.classes_).index("spam")] * 100
+    non_spam_prob = probs[list(model.classes_).index("non-spam")] * 100
+
+    return result, spam_prob, non_spam_prob
+
+
+def main():
+    model, vectorizer = train_model()
+
+    while True:
+        print("\n1. Check Email\n2. Exit")
+        choice = input("Enter choice: ")
+
+        if choice == "1":
+            email = input("Enter email:\n> ")
+            result, spam_p, non_spam_p = predict_email(email, model, vectorizer)
+
+            print("\nResult:", "SPAM" if result == "spam" else "NOT SPAM")
+            print(f"Spam Probability: {spam_p:.1f}%")
+            print(f"Normal Probability: {non_spam_p:.1f}%")
+
+        elif choice == "2":
+            break
+
+        else:
+            print("Invalid choice")
+
+
+main()
