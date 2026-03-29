@@ -2,8 +2,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import accuracy_score
 
-spam_emails = [
-    "win iphone now!!! click fast",
+spam_emails = ["win iphone now!!! click fast",
     "congrats u won 1 lakh rupees claim now",
     "lottery laga hai bhai call now urgent",
     "FREE gift card waiting just click link",
@@ -52,11 +51,9 @@ spam_emails = [
     "click link to double your paytm balance",
     "urgent msg from bank verify immediately",
     "discount coupon waiting claim before expire",
-    "exclusive deal only today dont miss",
-]
+    "exclusive deal only today dont miss",]
 
-non_spam_emails = [
-    "hey are we meeting tomorrow for project?",
+non_spam_emails = ["hey are we meeting tomorrow for project?",
     "pls send me the notes yaar missed class",
     "class postponed to monday i think",
     "did u complete assignment?",
@@ -151,55 +148,46 @@ non_spam_emails = [
     "coding results out today",
     "share location im near gate",
     "going lunch join?",
-    "practical schedule uploaded",
-]
+    "practical schedule uploaded",]
 
 emails = spam_emails + non_spam_emails
 labels = ["spam"] * len(spam_emails) + ["non-spam"] * len(non_spam_emails)
 
 def train_model():
-    print("Training model...")
-    vectorizer = CountVectorizer()
-    X = vectorizer.fit_transform(emails)
-
-    model = MultinomialNB()
-    model.fit(X, labels)
-
-    print("Model trained!")
-    return model, vectorizer
-
+                        print("Training model...")
+                        vectorizer = CountVectorizer()
+                        X = vectorizer.fit_transform(emails)
+                    
+                        model = MultinomialNB()
+                        model.fit(X, labels)
+                    
+                        print("Model trained!")
+                        return model, vectorizer
+                    
 
 def predict_email(email, model, vectorizer):
-    X = vectorizer.transform([email])
-    result = model.predict(X)[0]
-    probs = model.predict_proba(X)[0]
-
-    spam_prob = probs[list(model.classes_).index("spam")] * 100
-    non_spam_prob = probs[list(model.classes_).index("non-spam")] * 100
-
-    return result, spam_prob, non_spam_prob
+        X = vectorizer.transform([email])
+        result = model.predict(X)[0]
+        probs = model.predict_proba(X)[0]
+        spam_prob = probs[list(model.classes_).index("spam")] * 100
+        non_spam_prob = probs[list(model.classes_).index("non-spam")] * 100
+        return result, spam_prob, non_spam_prob
 
 
 def main():
-    model, vectorizer = train_model()
-
-    while True:
-        print("\n1. Check Email\n2. Exit")
-        choice = input("Enter choice: ")
-
-        if choice == "1":
-            email = input("Enter email:\n> ")
-            result, spam_p, non_spam_p = predict_email(email, model, vectorizer)
-
-            print("\nResult:", "SPAM" if result == "spam" else "NOT SPAM")
-            print(f"Spam Probability: {spam_p:.1f}%")
-            print(f"Normal Probability: {non_spam_p:.1f}%")
-
-        elif choice == "2":
-            break
-
-        else:
-            print("Invalid choice")
-
-
+            model, vectorizer = train_model()
+            while True:
+                print("\n1. Check Email\n2. Exit")
+                choice = input("Enter choice: ")
+                if choice == "1":
+                     email = input("Enter email:\n> ")
+                     result, spam_p, non_spam_p = predict_email(email, model, vectorizer)
+                     print("\nResult:", "SPAM" if result == "spam" else "NOT SPAM")
+                     print(f"Spam Probability: {spam_p:.1f}%")
+                     print(f"Normal Probability: {non_spam_p:.1f}%")
+        
+                elif choice == "2":
+                    break
+                else:
+                    print("Invalid choice")
 main()
